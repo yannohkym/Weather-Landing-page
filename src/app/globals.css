@@ -209,15 +209,95 @@ a {
 }
 
 .card {
-  background-color: white;
-  padding: 20px;
-  border: 1px solid #120505;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  flex: 1; /* Ensures that cards take equal space */
+  margin: 10px; /* Adds some margin around each card */
+  padding: 20px; /* Adds some padding inside each card */
+  border: 1px solid #ddd; /* Adds a border to each card */
+  border-radius: 5px; /* Rounds the corners of each card */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+}
+.cardContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Adjusts the spacing between the cards */
 }
 
 .verticalDivider {
   width: 1px;
-  background-color: #090909;
+  background-color: #38a84c;
   margin: 0 20px;
+}
+
+.toggleSwitch {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.switchLabel {
+  margin-left: 10px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #0070f3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+.progressContainer {
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.progressBar {
+  height: 20px;
+  background-color: #76c7c0;
+  text-align: center;
+  line-height: 20px;
+  color: white;
+  border-radius: 8px 0 0 8px; /* rounded corners on the left */
+  transition: width 0.3s ease;
 }

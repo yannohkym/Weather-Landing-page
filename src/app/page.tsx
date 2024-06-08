@@ -58,6 +58,7 @@ export default function Home() {
   const [city, setCity] = useState('');
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isFahrenheit, setIsFahrenheit] = useState(false);
 
   const handleSearch = async () => {
     if (!city) {
@@ -73,8 +74,22 @@ export default function Home() {
     }
   };
 
+  const toggleTemperatureUnit = () => {
+    setIsFahrenheit(!isFahrenheit);
+  };
+
+  const convertToFahrenheit = (temp: number) => (temp * 9/5) + 32;
+
   return (
     <main className={styles.main}>
+      <div className={styles.toggleSwitch}>
+        <label className={styles.switch}>
+          <input type="checkbox" onChange={toggleTemperatureUnit} />
+          <span className={styles.slider}></span>
+        </label>
+        <span className={styles.switchLabel}>{isFahrenheit ? 'Fahrenheit' : 'Celsius'}</span>
+      </div>
+
       <div className={styles.searchContainer}>
         <input
           type="text"
@@ -95,33 +110,55 @@ export default function Home() {
           <div className={styles.resultsColumn}>
             <div className={styles.card}>
               <h3>{weatherData.name}, {weatherData.sys.country}</h3>
-              <p>Temperature: {weatherData.main.temp}°C</p>
-              <p>Feels Like: {weatherData.main.feels_like}°C</p>
-              <p>Min Temp: {weatherData.main.temp_min}°C, Max Temp: {weatherData.main.temp_max}°C</p>
+              <p>Temperature: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp) : weatherData.main.temp}°{isFahrenheit ? 'F' : 'C'}</p>
+              <p>Feels Like: {isFahrenheit ? convertToFahrenheit(weatherData.main.feels_like) : weatherData.main.feels_like}°{isFahrenheit ? 'F' : 'C'}</p>
+              <p>Min Temp: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp_min) : weatherData.main.temp_min}°{isFahrenheit ? 'F' : 'C'}, Max Temp: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp_max) : weatherData.main.temp_max}°{isFahrenheit ? 'F' : 'C'}</p>
               <p>Humidity: {weatherData.main.humidity}%</p>
               <p>Pressure: {weatherData.main.pressure} hPa</p>
               <p>Wind: {weatherData.wind.speed} m/s, {weatherData.wind.deg}°</p>
               <p>Weather: {weatherData.weather[0].main} - {weatherData.weather[0].description}</p>
             </div>
-            <div className={styles.card}>
-              <h3>Cloudiness: {weatherData.clouds.all}%</h3>
-              <p>Visibility: {weatherData.visibility} meters</p>
-              <p>Sunrise: {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}</p>
-              <p>Sunset: {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}</p>
+            <div className={styles.cardContainer}>
+             <div className={styles.card}>
+             <h3>Yesterday: {weatherData.clouds.all}%</h3>
+             <p>Visibility: {weatherData.visibility} meters</p>
+             <p>Sunrise: {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}</p>
+            <p>Sunset: {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}</p>
+             </div>
+             <div className={styles.card}>
+            <h3>Today: {weatherData.clouds.all}%</h3>
+            <p>Visibility: {weatherData.visibility} meters</p>
+            <p>Sunrise: {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}</p>
+             <p>Sunset: {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}</p>
             </div>
+          <div className={styles.card}>
+           <h3>Tomorrow: {weatherData.clouds.all}%</h3>
+         <p>Visibility: {weatherData.visibility} meters</p>
+          <p>Sunrise: {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}</p>
+            <p>Sunset: {new Date(weatherData.sys.sunset * 1000).toLocaleTimeString()}</p>
+        </div>
+        </div>
           </div>
           <div className={styles.verticalDivider}></div>
           <div className={styles.resultsColumn}>
             <div className={styles.card}>
-              <h3>City Information</h3>
-              <p>City: {weatherData.name}</p>
-              <p>Country: {weatherData.sys.country}</p>
-              <p>Coordinates: {weatherData.coord.lat}, {weatherData.coord.lon}</p>
+              <h3>wind Status</h3>
+              <p>Speed: {weatherData.wind.speed} m/s,</p>
+              <p>Wind degree:  {weatherData.wind.deg}°</p>
+            
             </div>
             <div className={styles.card}>
-              <h3>Additional Info</h3>
-              <p>Base: {weatherData.base}</p>
+              <h3>Humidity</h3>
+              <p>Base: {weatherData.main.humidity}%</p>
               <p>Data Time: {new Date(weatherData.dt * 1000).toLocaleString()}</p>
+              <div className={styles.progressContainer}>
+            <div 
+            className={styles.progressBar} 
+            style={{ width: `${weatherData.main.humidity}%` }}
+             >
+            {weatherData.main.humidity}%
+          </div>
+      </div>
             </div>
           </div>
         </div>
