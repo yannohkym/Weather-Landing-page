@@ -115,8 +115,12 @@ export default function Home() {
               <p>Min Temp: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp_min) : weatherData.main.temp_min}°{isFahrenheit ? 'F' : 'C'}, Max Temp: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp_max) : weatherData.main.temp_max}°{isFahrenheit ? 'F' : 'C'}</p>
               <p>Humidity: {weatherData.main.humidity}%</p>
               <p>Pressure: {weatherData.main.pressure} hPa</p>
-              <p>Wind: {weatherData.wind.speed} m/s, {weatherData.wind.deg}°</p>
+              
               <p>Weather: {weatherData.weather[0].main} - {weatherData.weather[0].description}</p>
+              <img 
+                 src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`} 
+                alt={weatherData.weather[0].description} 
+              />
             </div>
             <div className={styles.cardContainer}>
              <div className={styles.card}>
