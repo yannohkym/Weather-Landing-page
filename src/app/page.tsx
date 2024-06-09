@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './page.module.css';
-
 
 interface WeatherData {
   name: string;
@@ -85,18 +84,13 @@ const fetchForecastData = async (city: string): Promise<ForecastData[] | null> =
   }
 };
 
-export default function Home()
- {
+export default function Home() {
   const [city, setCity] = useState('');
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [forecastData, setForecastData] = useState<ForecastData[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isFahrenheit, setIsFahrenheit] = useState(false);
-  const heade = (
-    <header>
-      <h1>Weather App</h1>
-    </header>
-  );
+
   const handleSearch = async () => {
     if (!city) {
       setError('Please enter a city name');
@@ -127,10 +121,7 @@ export default function Home()
           description: dayData[0].description,
           icon: dayData[0].icon,
         };
-      }
-    
-    
-    );
+      });
 
       const today = new Date().toISOString().split('T')[0];
       const nextThreeDays = forecastByDay.filter(day => day.date > today).slice(0, 3);
@@ -145,8 +136,8 @@ export default function Home()
     setIsFahrenheit(!isFahrenheit);
   };
 
-  const convertToFahrenheit = (temp: number) => (temp * 9/5) + 32;
- 
+  const convertToFahrenheit = (temp: number) => (temp * 9 / 5) + 32;
+
   return (
     <main className={styles.main}>
       <div className={styles.toggleSwitch}>
@@ -156,9 +147,7 @@ export default function Home()
         </label>
         <span className={styles.switchLabel}>{isFahrenheit ? 'Fahrenheit' : 'Celsius'}</span>
       </div>
-         
-     
-      
+
       <div className={styles.searchContainer}>
         <input
           type="text"
@@ -172,83 +161,74 @@ export default function Home()
         </button>
       </div>
       <div>
-       <h2 className={styles.h2}><b>My weather App</b></h2>
-       <h3 className={styles.h3}><b>Give me your city name and i will feed you with forecast and weather details</b></h3>
+        <h2 className={styles.h2}><b>My Weather App</b></h2>
+        <h3 className={styles.h3}><b>Give me your city name and I will feed you with forecast and weather details</b></h3>
       </div>
-      
-
-  
-
 
       {error && <p className={styles.error}>{error}</p>}
 
-      {weatherData && (
-        <div className={styles.resultsContainer}>
-          <div className={styles.resultsColumn}>
-            <div className={styles.card}>
-              <h3>{weatherData.name}, {weatherData.sys.country}</h3>
-              <p>Temperature: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp) : weatherData.main.temp}°{isFahrenheit ? 'F' : 'C'}</p>
-              <p>Feels Like: {isFahrenheit ? convertToFahrenheit(weatherData.main.feels_like) : weatherData.main.feels_like}°{isFahrenheit ? 'F' : 'C'}</p>
-              <p>Min Temp: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp_min) : weatherData.main.temp_min}°{isFahrenheit ? 'F' : 'C'}, Max Temp: {isFahrenheit ? convertToFahrenheit(weatherData.main.temp_max) : weatherData.main.temp_max}°{isFahrenheit ? 'F' : 'C'}</p>
-              <p>Weather: {weatherData.weather[0].main} - {weatherData.weather[0].description}</p>
-              <img 
-                 src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`} 
-                alt={weatherData.weather[0].description} 
-              />
+      <div className={styles.cardContainer}>
+        <div >
+          <div className={styles.card}>
+            <h3>{weatherData ? `${weatherData.name}, ${weatherData.sys.country}` : 'City, Country'}</h3>
+            <p>Temperature: {weatherData ? (isFahrenheit ? convertToFahrenheit(weatherData.main.temp) : weatherData.main.temp) : '--'}°{isFahrenheit ? 'F' : 'C'}</p>
+            <p>Feels Like: {weatherData ? (isFahrenheit ? convertToFahrenheit(weatherData.main.feels_like) : weatherData.main.feels_like) : '--'}°{isFahrenheit ? 'F' : 'C'}</p>
+            <p>Min Temp: {weatherData ? (isFahrenheit ? convertToFahrenheit(weatherData.main.temp_min) : weatherData.main.temp_min) : '--'}°{isFahrenheit ? 'F' : 'C'}, Max Temp: {weatherData ? (isFahrenheit ? convertToFahrenheit(weatherData.main.temp_max) : weatherData.main.temp_max) : '--'}°{isFahrenheit ? 'F' : 'C'}</p>
+            <p>Weather: {weatherData ? `${weatherData.weather[0].main} - ${weatherData.weather[0].description}` : '--'}</p>
+            <img
+              src={weatherData ? `http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png` : 'http://openweathermap.org/img/wn/01d@2x.png'}
+              alt={weatherData ? weatherData.weather[0].description : 'weather icon'}
+            />
+          </div>
+        </div>
+        {forecastData && (
+          <div className={styles.cardContainer}>
+            {forecastData.map((day, index) => (
+              <div className={styles.Card} key={index}>
+                <h3>{index === 0 ? 'Tomorrow' : `Day ${index + 1}`}: {new Date(day.date).toLocaleDateString()}</h3>
+                <p>
+                  <img
+                    src={`http://openweathermap.org/img/wn/${day.icon}@2x.png`}
+                    alt={day.description}
+                  />
+                </p>
+                <p>Min Temp: {isFahrenheit ? convertToFahrenheit(day.temp_min) : day.temp_min}°{isFahrenheit ? 'F' : 'C'}, Max Temp: {isFahrenheit ? convertToFahrenheit(day.temp_max) : day.temp_max}°{isFahrenheit ? 'F' : 'C'}</p>
+              </div>
+            ))}
+          </div>
+        )}
+       
+        <div className={styles.resultsColumn}>
+          <div className={styles.card}>
+            <h3>Wind Status</h3>
+            <p>Speed: {weatherData ? `${weatherData.wind.speed} m/s` : '--'}</p>
+            <div className={styles.pointerContainer}>
+              <div
+                className={styles.pointer}
+                style={{ transform: weatherData ? `rotate(${weatherData.wind.deg}deg)` : 'rotate(0deg)' }}
+              ></div>
+              <span>{weatherData ? `${weatherData.wind.deg}°` : '--'}</span>
             </div>
           </div>
-          {forecastData && (
-        <div className={styles.cardContainer}>
-          {forecastData.map((day, index) => (
-            <div className={styles.card} key={index}>
-              <h3>{index === 0 ? 'Tomorrow' : `Day ${index + 1}`}: {new Date(day.date).toLocaleDateString()}</h3>
-              <p>
-                <img 
-                  src={`http://openweathermap.org/img/wn/${day.icon}@2x.png`} 
-                  alt={day.description} 
-                />
-              </p>
-              <p>Min Temp: {isFahrenheit ? convertToFahrenheit(day.temp_min) : day.temp_min}°{isFahrenheit ? 'F' : 'C'}, Max Temp: {isFahrenheit ? convertToFahrenheit(day.temp_max) : day.temp_max}°{isFahrenheit ? 'F' : 'C'}</p>
-            </div>
-          ))}
-        </div>
-      )}
-          <div className={styles.verticalDivider}></div>
-          <div className={styles.resultsColumn}>
-            <div className={styles.card}>
-              <h3>Wind Status</h3>
-              <p>Speed: {weatherData.wind.speed} m/s</p>
-              <div className={styles.pointerContainer}>
-                <div 
-                  className={styles.pointer} 
-                  style={{ transform: `rotate(${weatherData.wind.deg}deg)` }}
-                ></div>
-                <span>{weatherData.wind.deg}°</span>
-                </div>
-                </div>
-            <div className={styles.card}>
-              <h3>Humidity</h3>
-              <p>Base: {weatherData.main.humidity}%</p>
-              <p>Data Time: {new Date(weatherData.dt * 1000).toLocaleString()}</p>
-              <div className={styles.progressContainer}>
-                <div 
-                  className={styles.progressBar} 
-                  style={{ width: `${weatherData.main.humidity}%` }}
-                >
-                  {weatherData.main.humidity}%
-                </div>
+          <div className={styles.card}>
+            <h3>Humidity</h3>
+            <p>Humidity: {weatherData ? `${weatherData.main.humidity}%` : '--'}</p>
+            <p>Data Time: {weatherData ? new Date(weatherData.dt * 1000).toLocaleString() : '--'}</p>
+            <div className={styles.progressContainer}>
+              <div
+                className={styles.progressBar}
+                style={{ width: weatherData ? `${weatherData.main.humidity}%` : '0%' }}
+              >
+                {weatherData ? `${weatherData.main.humidity}%` : '--'}
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
-<footer>
-      <p>Copyright © 2024 Weather App. All rights reserved.</p>
-    </footer>
+      <footer>
+        <p>Copyright © 2024 Weather App. All rights reserved.</p>
+      </footer>
     </main>
   );
-
- 
-
 }
